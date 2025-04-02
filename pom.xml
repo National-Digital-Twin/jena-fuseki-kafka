@@ -80,7 +80,7 @@
     <plugin.shade>3.6.0</plugin.shade>
     <plugin.site>3.21.0</plugin.site>
     <plugin.source>3.3.1</plugin.source>
-    <plugin.surefire>3.5.2</plugin.surefire>
+    <plugin.surefire>3.5.3</plugin.surefire>
 
     <!-- Internal dependencies -->
     <dependency.jena>5.2.0</dependency.jena>
