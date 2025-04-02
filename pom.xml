@@ -72,7 +72,7 @@
     <plugin.exec>3.5.0</plugin.exec>
     <plugin.gpg>3.2.7</plugin.gpg>
     <plugin.install>3.1.4</plugin.install>
-    <plugin.jacoco>0.8.12</plugin.jacoco>
+    <plugin.jacoco>0.8.13</plugin.jacoco>
     <plugin.jar>3.4.2</plugin.jar>
     <plugin.javadoc>3.11.2</plugin.javadoc>
     <plugin.nexus>1.7.0</plugin.nexus>
