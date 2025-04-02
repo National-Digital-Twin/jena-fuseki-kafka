@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) Telicent Ltd.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>uk.gov.dbt.ndtp.jena</groupId>
+  <artifactId>jena-kafka</artifactId>
+  <packaging>pom</packaging>
+  <version>1.5.5</version>
+
+  <name>Apache Jena Fuseki-Kafka Connector</name>
+  <description>Fuseki Module : Kafka Connector</description>
+  <url>https://github.com/National-Digital-Twin/jena-fuseki-kafka</url>
+
+  <developers>
+    <developer>
+        <name>IANode Developers</name>
+        <email>NDTP@businessandtrade.gov.uk</email>
+        <organization>Department for Business and Trade</organization>
+        <organizationUrl>http://ndtp.co.uk</organizationUrl>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>Apache 2.0 License</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <issueManagement>
+    <url>https://github.com/National-Digital-Twin/jena-fuseki-kafka</url>
+  </issueManagement>
+
+  <scm>
+    <connection>scm:git:git@github.com:National-Digital-Twin/jena-fuseki-kafka</connection>
+    <developerConnection>scm:git:git@github.com:National-Digital-Twin/jena-fuseki-kafka</developerConnection>
+    <url>https://github.com/National-Digital-Twin/jena-fuseki-kafka</url>
+    <tag>1.3.2</tag>
+  </scm>
+
+  <properties>
+    <!-- build properties -->
+    <build.time.xsd>${maven.build.timestamp}</build.time.xsd>
+    <java.version>17</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.outputTimestamp>2025-03-12T15:39:04Z</project.build.outputTimestamp>
+
+    <!-- Maven Plugin versions -->
+    <plugin.clean>3.4.1</plugin.clean>
+    <plugin.compiler>3.14.0</plugin.compiler>
+    <plugin.cyclonedx>2.9.1</plugin.cyclonedx>
+    <plugin.dependency>3.8.1</plugin.dependency>
+    <plugin.deploy>3.1.3</plugin.deploy>
+    <plugin.enforcer>3.5.0</plugin.enforcer>
+    <plugin.exec>3.5.0</plugin.exec>
+    <plugin.gpg>3.2.7</plugin.gpg>
+    <plugin.install>3.1.4</plugin.install>
+    <plugin.jacoco>0.8.12</plugin.jacoco>
+    <plugin.jar>3.4.2</plugin.jar>
+    <plugin.javadoc>3.11.2</plugin.javadoc>
+    <plugin.nexus>1.7.0</plugin.nexus>
+    <plugin.resources>3.3.1</plugin.resources>
+    <plugin.shade>3.6.0</plugin.shade>
+    <plugin.site>3.21.0</plugin.site>
+    <plugin.source>3.3.1</plugin.source>
+    <plugin.surefire>3.5.2</plugin.surefire>
+
+    <!-- Internal dependencies -->
+    <dependency.jena>5.2.0</dependency.jena>
+    <dependency.secure-agents>0.26.7</dependency.secure-agents>
+
+    <!-- External dependencies -->
+    <dependency.commons-io>2.18.0</dependency.commons-io>
+    <dependency.kafka>3.9.0</dependency.kafka>
+    <dependency.log4j2>2.24.3</dependency.log4j2>
+    <dependency.slf4j>2.0.17</dependency.slf4j>
+
+    <!-- Test dependencies -->
+    <dependency.awaitility>4.3.0</dependency.awaitility>
+    <dependency.junit5>5.11.4</dependency.junit5>
+    <dependency.junit5-platform>1.10.1</dependency.junit5-platform>
+    <dependency.mockito>5.16.1</dependency.mockito>
+    <dependency.testcontainers>1.20.6</dependency.testcontainers>
+    <dependency.testng>7.11.0</dependency.testng>
+
+  </properties>
+
+  <modules>
+    <module>jena-kafka-connector</module>
+    <module>jena-fuseki-kafka-module</module>
+    <module>jena-kafka-client</module>
+    <module>jena-fmod-kafka</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- Internal dependency -->
+      <dependency>
+        <groupId>org.apache.jena</groupId>
+        <artifactId>jena-arq</artifactId>
+        <version>${dependency.jena}</version>
+        <!--
+             Exclusions for checkerframework and errorprone can be
+             removed for Jena 5.1.0 because Jena does not pass them on.
+        -->
+        <exclusions>
+          <exclusion>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_annotations</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jena</groupId>
+        <artifactId>jena-cmds</artifactId>
+        <version>${dependency.jena}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jena</groupId>
+        <artifactId>jena-fuseki-main</artifactId>
+        <version>${dependency.jena}</version>
+      </dependency>
+
+      <!-- The combined jar for Fuseki main -->
+      <dependency>
+        <groupId>org.apache.jena</groupId>
+        <artifactId>jena-fuseki-server</artifactId>
+        <version>${dependency.jena}</version>
+      </dependency>
+
+      <!-- External dependencies -->
+      <dependency>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>kafka-clients</artifactId>
+        <version>${dependency.kafka}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j2-impl</artifactId>
+        <version>${dependency.log4j2}</version>
+        <exclusions>
+          <!-- Apache Kafka client pulls in org.osgi:org.osgi.core:jar -->
+          <exclusion>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_annotations</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${dependency.slf4j}</version>
+      </dependency>
+
+      <!-- Test dependencies -->
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>kafka</artifactId>
+        <version>${dependency.testcontainers}</version>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${dependency.junit5}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${dependency.mockito}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>${dependency.mockito}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${plugin.compiler}</version>
+        <configuration>
+          <release>${java.version}</release>
+          <compilerArgument>-proc:none</compilerArgument>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${plugin.jar}</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${plugin.shade}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${plugin.source}</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>attach-sources-test</id>
+              <goals>
+                <goal>test-jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${plugin.surefire}</version>
+        <configuration>
+          <argLine>
+            --add-opens java.base/java.util=ALL-UNNAMED
+            --add-opens java.base/java.lang=ALL-UNNAMED
+            @{jacocoArgLine} -XX:+EnableDynamicAgentLoading
+          </argLine>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${plugin.javadoc}</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <notimestamp>true</notimestamp>
+          <quiet>true</quiet>
+          <doclint>none</doclint>
+          <version>true</version>
+          <show>public</show>
+          <encoding>UTF-8</encoding>
+          <windowtitle>${project.name} ${project.version}</windowtitle>
+          <doctitle>${project.name} ${project.version}</doctitle>
+          <bottom>Licensed under the Apache License, Version 2.0</bottom>
+
+          <!-- Settings for @apiNote, @implSpec and @implNote -->
+          <tags>
+            <tag>
+              <name>apiNote</name>
+              <placement>a</placement>
+              <head>API Note:</head>
+            </tag>
+            <tag>
+              <name>implSpec</name>
+              <placement>a</placement>
+              <head>Implementation Requirements:</head>
+            </tag>
+            <tag>
+              <name>implNote</name>
+              <placement>a</placement>
+              <head>Implementation Note:</head>
+            </tag>
+          </tags>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+	      <version>${plugin.resources}</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>${plugin.deploy}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${plugin.dependency}</version>
+        <configuration>
+          <overWriteReleases>false</overWriteReleases>
+          <overWriteIfNewer>true</overWriteIfNewer>
+        </configuration>
+      </plugin>
+
+      <!-- Run the enforcer plugin automatically at compile time -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${plugin.enforcer}</version>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration combine.self="override">
+              <rules>
+                <requirePluginVersions>
+                  <message>Best practice is to always define plugin versions!</message>
+                  <banLatest>true</banLatest>
+                  <banRelease>true</banRelease>
+                </requirePluginVersions>
+                <requireReleaseDeps>
+                  <message>No SNAPSHOT dependencies are allowed!</message>
+                  <onlyWhenRelease>true</onlyWhenRelease>
+                </requireReleaseDeps>
+                <requireMavenVersion>
+                  <version>3.8.1</version>
+                </requireMavenVersion>
+              </rules>
+              <fail>true</fail>
+              <failFast>false</failFast>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>${plugin.clean}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>${plugin.install}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${plugin.site}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <version>${plugin.cyclonedx}</version>
+        <executions>
+          <execution>
+            <id>build-sbom-cyclonedx</id>
+            <phase>package</phase>
+            <goals>
+              <goal>makeAggregateBom</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <outputName>${project.artifactId}-${project.version}-bom</outputName>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>${plugin.gpg}</version>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>sign</goal>
+                </goals>
+                <phase>verify</phase>
+            </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.2</version>
+        <configuration>
+            <repositoryId>github</repositoryId>
+            <url>https://maven.pkg.github.com/National-Digital-Twin/jena-fuseki-kafka</url>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${plugin.jacoco}</version>
+        <configuration>
+          <propertyName>jacocoArgLine</propertyName>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>apache-snapshots</id>
+      <url>https://repository.apache.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+      <repository>
+        <id>github</id>
+        <url>https://maven.pkg.github.com/National-Digital-Twin/*</url>
+        <releases>
+          <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>true</enabled>
+        </snapshots>
+      </repository>
+  </repositories>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/National-Digital-Twin/jena-fuseki-kafka</url>
+    </snapshotRepository>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/National-Digital-Twin/jena-fuseki-kafka</url>
+    </repository>
+  </distributionManagement>
+
+</project>

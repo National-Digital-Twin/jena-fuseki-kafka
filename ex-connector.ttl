@@ -1,0 +1,29 @@
+PREFIX :        <#>
+PREFIX fuseki:  <http://jena.apache.org/fuseki#>
+PREFIX fk:      <http://jena.apache.org/fuseki/kafka#>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ja:      <http://jena.hpl.hp.com/2005/11/Assembler#>
+
+## Connect Kafka topic "RDF" to /ds
+
+<#connector> rdf:type fk:Connector ;
+    fk:bootstrapServers   "localhost:9092";
+    fk:topic              "RDF";
+
+    ## Local Fuseki endpoint.
+    ## Dataset or named service
+    fk:fusekiServiceName  "/ds";
+    
+    ## Whether to re-sync from the topic at start-up.
+    ## false makes Fuseki-Kafka just a message transport
+    ## but is easier during development.
+    fk:syncTopic          false ;
+
+    ## If true, ignore topicSync=true and play from the start of the topic.
+    ## fk:replayTopic        false ;
+
+    fk:stateFile          "Databases/RDF.state";
+##     fk:config ( "K1" "V1") ;
+##     fk:config ( "K2" "V2") ;
+    .
