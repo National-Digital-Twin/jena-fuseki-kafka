@@ -202,7 +202,7 @@ http://www.apache.org/licenses/
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright [yyyy] [name of copyright owner]
+   Copyright (c) 2024 Telicent Ltd.
 
    Copyright 2025 Crown Copyright, National Digital Twin Programme,  
    legally attributed to the Department for Business and Trade (UK)
