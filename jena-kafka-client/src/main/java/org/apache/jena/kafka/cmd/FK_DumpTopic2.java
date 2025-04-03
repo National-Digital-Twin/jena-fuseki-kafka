@@ -1,0 +1,141 @@
+// SPDX-License-Identifier: Apache-2.0
+// Originally developed by Telicent Ltd.; subsequently adapted, enhanced, and maintained by the National Digital Twin Programme.
+
+/*
+ *  Copyright (c) Telicent Ltd.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+/*
+ *  Modifications made by the National Digital Twin Programme (NDTP)
+ *  © Crown Copyright 2025. This work has been developed by the National Digital Twin Programme
+ *  and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+ */
+
+
+package org.apache.jena.kafka.cmd;
+
+import java.io.PrintStream;
+import java.time.Duration;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.jena.atlas.logging.LogCtl;
+import org.apache.jena.kafka.KConnectorDesc;
+import org.apache.jena.kafka.KafkaConnectorAssembler;
+import org.apache.jena.kafka.common.DataState;
+import org.apache.jena.kafka.common.DeserializerDump;
+import org.apache.jena.sparql.core.assembler.AssemblerUtils;
+import org.apache.jena.sys.JenaSystem;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.StringDeserializer;
+
+
+// Old(er) code - uses connector.ttl
+@SuppressWarnings("java:S106") // SonarQube rule: Replace this use of System.out by a logger.
+public class FK_DumpTopic2 {
+
+    static {
+        LogCtl.setLog4j2();
+        JenaSystem.init();
+    }
+
+    public static void main(String... args) {
+        // No args - assumes FK_Defaults.connectorFile
+        LogCtl.setLog4j2();
+
+        AssemblerUtils.registerAssembler(null, KafkaConnectorAssembler.getType(), new KafkaConnectorAssembler());
+        KConnectorDesc conn = (KConnectorDesc)AssemblerUtils.build(FK_Defaults.connectorFile, KafkaConnectorAssembler.getType());
+
+        if ( conn == null ) {
+            System.err.flush();
+            System.out.println();
+            System.out.println("FAILED");
+            return;
+        }
+
+        String topic = conn.getTopic();
+
+        // Client-side state management.
+        DataState dState = DataState.createEphemeral(conn.getTopic());
+
+        // -- Props
+        Properties cProps = conn.getKafkaConsumerProps();
+        StringDeserializer strDeser = new StringDeserializer();
+        DeserializerDump deSer = new DeserializerDump();
+        Consumer<String, String> consumer = new KafkaConsumer<>(cProps, strDeser, deSer);
+        TopicPartition topicPartition = new TopicPartition(topic, 0);
+        consumer.assign(List.of(topicPartition));
+
+        // Resume.
+        long initialOffset = dState.getLastOffset();
+        if ( initialOffset < 0 )
+            consumer.seekToBeginning(List.of(topicPartition));
+        else {
+            System.err.println("Should be replay");
+        }
+
+        for ( ;; ) {
+            boolean somethingReceived = receiver(consumer, dState);
+            if ( ! somethingReceived )
+                break;
+        }
+
+        System.exit(0);
+    }
+
+    // Once round the polling loop.
+    private static boolean receiver(Consumer<String, String> consumer, DataState dState) {
+        final long lastOffsetState = dState.getLastOffset();
+        long newOffset = receiverStep(dState.getLastOffset(), consumer);
+        if ( newOffset == lastOffsetState )
+            return false;
+        dState.setLastOffset(newOffset);
+        return true;
+    }
+
+    private final static AtomicBoolean seenFirst = new AtomicBoolean(false);
+    private final static PrintStream output = System.out;
+
+    // Do the Kafka-poll/wait.
+    private static long receiverStep(final long lastOffsetState, Consumer<String, String> consumer) {
+        ConsumerRecords<String, String> cRec = consumer.poll(Duration.ofMillis(5000));
+        long lastOffset = lastOffsetState;
+        if ( seenFirst.get() ) {
+            output.println();
+            seenFirst.set(true);
+        }
+
+        boolean seenFirstInBatch = seenFirst.get();
+        for ( ConsumerRecord<String, String> rec : cRec ) {
+            if ( seenFirstInBatch )
+                output.println();
+            else
+                seenFirstInBatch = true;
+            long offset = rec.offset();
+            output.printf("==--== Offset: %d ==--------==%n", offset);
+            output.print(rec.value());
+            if ( offset != lastOffset+1 )
+                output.printf("WARNING: Inconsistent offsets: offset=%d, lastOffset = %d%n", offset, lastOffset);
+            lastOffset = offset;
+        }
+
+        return lastOffset;
+    }
+}

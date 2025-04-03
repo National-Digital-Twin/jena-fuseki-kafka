@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+## SPDX-License-Identifier: Apache-2.0
+##
+##  Copyright (c) Telicent Ltd.
+##
+##  Licensed under the Apache License, Version 2.0 (the "License");
+##  you may not use this file except in compliance with the License.
+##  You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+##  Unless required by applicable law or agreed to in writing, software
+##  distributed under the License is distributed on an "AS IS" BASIS,
+##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+##  See the License for the specific language governing permissions and
+##  limitations under the License.
+##
+##
+##  This file is unmodified from its original version developed by Telicent Ltd.,
+##  and is now included as part of a repository maintained by the National Digital Twin Programme.
+##  All support, maintenance and further development of this code is now the responsibility
+##  of the National Digital Twin Programme.
+
+ARGS="$@"
+
+## Environment variables.
+## One area? HOME==BASE?
+FUSEKI_HOME="${FUSEKI_HOME:-$PWD}"
+
+##FUSEKI_BASE="${FUSEKI_BASE:-$FUSEKI_HOME}"
+
+## Server jar (if unset, the script search for the file)
+#FUSEKI_JAR=
+
+## Directory of extra jars - Fuseki modules and dependencies.
+FUSEKI_LIB="$FUSEKI_HOME"'/lib'
+
+## Settings.
+## Name of the jar entry point.
+MAIN=org.apache.jena.fuseki.main.cmds.FusekiMainCmd
+
+DEBUG=
+VERBOSE=
+
+function debug() {
+    [[ -n $DEBUG ]] || return 
+    local MSG="$1"
+    echo "$MSG" 1>&2
+}
+
+## ---- Find java.
+if [ -z "$JAVA" ]
+then
+    if [ -z "$JAVA_HOME" ]
+    then
+	JAVA="$(which java)"
+    else
+        JAVA="$JAVA_HOME/bin/java"
+    fi
+fi
+
+if [ -z "$JAVA" ]
+then
+    (
+	echo "Cannot find a Java JDK."
+	echo "Please set either set JAVA or JAVA_HOME and put java (>=1.11) in your PATH."
+    ) 1>&2
+  exit 1
+fi
+
+debug "JAVA=$JAVA"
+
+## ---- Find the Fuseki jar file.
+## Usually in the same directory as the script.
+function find_jar() {
+    local DIR="$FUSEKI_HOME"
+
+    local JAR="$(find_jar1 $DIR)"
+
+    if [[ -z $JAR ]]
+    then
+	 JAR="$(find_jar1 $PWD)"
+    fi
+    
+    if [[ -z $JAR ]] ; then
+	 JAR="$(find_jar1 $PWD/target)"
+    fi
+    echo "$JAR"
+}
+
+function find_jar1() {
+    local DIR="$1"
+    local JAR="$(echo "$DIR"/jena-fuseki-server-*.jar)"
+    
+    if [[ ! -e $JAR ]]
+    then
+	JAR=""
+    fi
+    echo "$JAR"
+}
+
+## Try a few places.
+FUSEKI_JAR="${FUSEKI_JAR:-$(find_jar)}"
+
+if [[ $? -ne 0 ]] ; then
+    echo "Failed to find a FUSEKI_JAR" 1>&2
+    exit 1
+fi
+
+if [[ ! -e "$FUSEKI_JAR" ]]
+then
+    echo "Can't find Fuseki server jar file '$FUSEKI_JAR'" 1>&2
+    exit 1
+fi
+
+if [[ $VERBOSE == 'true' ]]
+then
+    (
+	echo "FUSEKI_HOME = $FUSEKI_HOME"
+	echo "FUSEKI_JAR  = $FUSEKI_JAR"
+	echo "FUSEKI_LIB  = $FUSEKI_LIB"
+    ) 1>&2
+fi
+
+exec $JAVA -cp "$FUSEKI_JAR:$FUSEKI_LIB"'/*' "$MAIN" $ARGS

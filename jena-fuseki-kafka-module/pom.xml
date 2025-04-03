@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ SPDX-License-Identifier: Apache-2.0
+ Originally developed by Telicent Ltd.; subsequently adapted, enhanced, and maintained by the National Digital Twin Programme.
+
+    Copyright (c) Telicent Ltd.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+
+    Modifications made by the National Digital Twin Programme (NDTP)
+    © Crown Copyright 2025. This work has been developed by the National Digital Twin Programme
+    and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>jena-fuseki-kafka-module</artifactId>
+  <packaging>jar</packaging>
+  <description>Apache Jena Fuseki module for Kafka connector</description>
+  <name>Jena-Kafka : Fuseki-Kafka Connector</name>
+
+  <parent>
+    <groupId>uk.gov.dbt.ndtp.jena</groupId>
+    <artifactId>jena-kafka</artifactId>
+    <version>1.5.5</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <properties>
+    <automatic.module.name>uk.gov.dbt.ndtp.jena.fuseki.kafka</automatic.module.name>
+  </properties>
+
+  <dependencies>
+
+    <!-- Internal dependencies -->
+    <dependency>
+      <groupId>uk.gov.dbt.ndtp.jena</groupId>
+      <artifactId>jena-kafka-connector</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.jena</groupId>
+      <artifactId>jena-fuseki-main</artifactId>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${dependency.testng}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>uk.gov.dbt.ndtp.secure-agents</groupId>
+      <artifactId>event-source-kafka</artifactId>
+      <version>${dependency.secure-agents}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>uk.gov.dbt.ndtp.secure-agents</groupId>
+      <artifactId>event-source-kafka</artifactId>
+      <version>${dependency.secure-agents}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>uk.gov.dbt.ndtp.secure-agents</groupId>
+      <artifactId>event-source-kafka</artifactId>
+      <version>${dependency.secure-agents}</version>
+      <classifier>certs-helper</classifier>
+      <scope>test</scope>
+      <type>zip</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>kafka</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-compress</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>${dependency.awaitility}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Adding to avoid incompatibility with older versions and Test Containers -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${dependency.commons-io}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/Test*.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>${automatic.module.name}</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>docker</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <os>
+          <family>!Windows</family>
+        </os>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/Test*.java</include>
+                <include>**/DockerTest*.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>${plugin.dependency}</version>
+            <executions>
+              <execution>
+                <id>unpack-certs-helper</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>unpack-dependencies</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.basedir}</outputDirectory>
+                  <includeTypes>zip</includeTypes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>encrypted-kafka-tests</id>
+      <activation>
+        <os>
+          <family>!Windows</family>
+        </os>
+      </activation>
+
+      <build>
+        <plugins>
+          <!-- Only regenerate SSL certificates on POSIX OSes since we do it via a Bash script -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${plugin.exec}</version>
+            <executions>
+              <execution>
+                <id>generate-test-ssl-certs</id>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <phase>process-test-resources</phase>
+                <configuration>
+                  <executable>${project.basedir}/test-certs/generateCerts.sh</executable>
+                  <skip>${skipTests}</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

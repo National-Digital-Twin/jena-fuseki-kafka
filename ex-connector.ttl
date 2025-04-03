@@ -1,0 +1,51 @@
+## SPDX-License-Identifier: Apache-2.0
+##
+##  Copyright (c) Telicent Ltd.
+##
+##  Licensed under the Apache License, Version 2.0 (the "License");
+##  you may not use this file except in compliance with the License.
+##  You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+##  Unless required by applicable law or agreed to in writing, software
+##  distributed under the License is distributed on an "AS IS" BASIS,
+##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+##  See the License for the specific language governing permissions and
+##  limitations under the License.
+##
+##
+##  This file is unmodified from its original version developed by Telicent Ltd.,
+##  and is now included as part of a repository maintained by the National Digital Twin Programme.
+##  All support, maintenance and further development of this code is now the responsibility
+##  of the National Digital Twin Programme.
+
+PREFIX :        <#>
+PREFIX fuseki:  <http://jena.apache.org/fuseki#>
+PREFIX fk:      <http://jena.apache.org/fuseki/kafka#>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ja:      <http://jena.hpl.hp.com/2005/11/Assembler#>
+
+## Connect Kafka topic "RDF" to /ds
+
+<#connector> rdf:type fk:Connector ;
+    fk:bootstrapServers   "localhost:9092";
+    fk:topic              "RDF";
+
+    ## Local Fuseki endpoint.
+    ## Dataset or named service
+    fk:fusekiServiceName  "/ds";
+    
+    ## Whether to re-sync from the topic at start-up.
+    ## false makes Fuseki-Kafka just a message transport
+    ## but is easier during development.
+    fk:syncTopic          false ;
+
+    ## If true, ignore topicSync=true and play from the start of the topic.
+    ## fk:replayTopic        false ;
+
+    fk:stateFile          "Databases/RDF.state";
+##     fk:config ( "K1" "V1") ;
+##     fk:config ( "K2" "V2") ;
+    .
