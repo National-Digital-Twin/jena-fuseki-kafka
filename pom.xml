@@ -29,7 +29,7 @@
   <groupId>uk.gov.dbt.ndtp.jena</groupId>
   <artifactId>jena-kafka</artifactId>
   <packaging>pom</packaging>
-  <version>1.5.5</version>
+  <version>0.90.0</version>
 
   <name>Apache Jena Fuseki-Kafka Connector</name>
   <description>Fuseki Module : Kafka Connector</description>
@@ -91,7 +91,7 @@
 
     <!-- Internal dependencies -->
     <dependency.jena>5.2.0</dependency.jena>
-    <dependency.secure-agents>0.26.7</dependency.secure-agents>
+    <dependency.secure-agents>0.90.0</dependency.secure-agents>
 
     <!-- External dependencies -->
     <dependency.commons-io>2.18.0</dependency.commons-io>

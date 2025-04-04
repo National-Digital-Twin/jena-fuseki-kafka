@@ -36,7 +36,7 @@
   <parent>
     <groupId>uk.gov.dbt.ndtp.jena</groupId>
     <artifactId>jena-kafka</artifactId>
-    <version>1.5.5</version>
+    <version>0.90.0</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>uk.gov.dbt.ndtp.jena</groupId>
       <artifactId>jena-fuseki-kafka-module</artifactId>
-      <version>1.5.5</version>
+      <version>0.90.0</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
