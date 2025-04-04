@@ -35,7 +35,7 @@
   <parent>
     <groupId>uk.gov.dbt.ndtp.jena</groupId>
     <artifactId>jena-kafka</artifactId>
-    <version>1.5.5</version>
+    <version>0.90.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
