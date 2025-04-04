@@ -1,7 +1,8 @@
 # README  
 
-**Repository:** `jena-fuseki-kafka`
+**Repository:** `jena-fuseki-kafka`   
 **Description:** `This repository provides an Apache Jena Fuseki extension module for receiving data over Apache Kafka topics. The module is used to read knowledge from a Kafka message stream typically as the final stage in a pipeline of data processing for ingest.`
+
 <!-- SPDX-License-Identifier: Apache-2.0 AND OGL-UK-3.0 -->
 
 ## Overview  
@@ -9,7 +10,7 @@ This repository contributes to the development of **secure, scalable, and intero
 
 This repository is one of several open-source components that underpin NDTP’s **Integration Architecture (IA)**—a framework designed to allow organisations to manage and exchange data securely while maintaining control over their own information. The IA is actively deployed and tested across multiple sectors, ensuring its adaptability and alignment with real-world needs. 
 
-For a complete overview of the Integration Architecture (IA) project, please see the [Integration Architecture Documentation](https://github.com/National-Digital-Twin/integration-architecture-documentation)
+For a complete overview of the Integration Architecture (IA) project, please see the [Integration Architecture Documentation](https://github.com/National-Digital-Twin/integration-architecture-documentation).
 
 ## Prerequisites  
 Before using this repository, ensure you have the following dependencies installed:  
@@ -38,7 +39,7 @@ mvn clean package
 
 ```
 
-This creates a jar file `jena-fmod-kafka-VER.jar` in `jena-fmod-kafka/target/`
+This creates a jar file `jena-fmod-kafka-VER.jar` in `jena-fmod-kafka/target/`.
 
 Move this jar to 'lib/' in the directory you wish to run Fuseki with the Fuseki-Kafka connector.
 
@@ -85,7 +86,7 @@ To use the library directly in your project:
 _populate the `artifactId` above as appropriate._
 
 ## Features  
-- **Core functionality**  
+- **Key functionality**  
     - Provides an Apache Jena Fuseki extension module for receiving and processing data over Apache Kafka topics.  
     - Enables ingestion of knowledge from Kafka message streams as part of a data processing pipeline.  
 
