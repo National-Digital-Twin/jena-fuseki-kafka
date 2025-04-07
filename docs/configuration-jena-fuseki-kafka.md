@@ -1,4 +1,7 @@
 # Configuration
+**Repository:** `jena-fuseki-kafka`  
+**Description:** `configuring Fuseki with Kafka`  
+<!-- SPDX-License-Identifier: OGL-UK-3.0 -->
 
 ## Usage
 The Fuseki-Kafka connector receives Kafka events on a topic and applies them to a Fuseki service endpoint. In effect, it is the same as if an HTTP POST request is sent to the Fuseki service.
@@ -200,3 +203,7 @@ Authentication modes are applicable.
 
 ## Contributors
 The development of these works has been made possible with thanks to our [contributors](https://github.com/National-Digital-Twin/jena-fuseki-kafka/graphs/contributors).
+
+© Crown Copyright 2025. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the
+governing entity.  
+Licensed under the Open Government Licence v3.0.
