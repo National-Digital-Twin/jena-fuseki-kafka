@@ -90,7 +90,7 @@
     <plugin.surefire>3.5.2</plugin.surefire>
 
     <!-- Internal dependencies -->
-    <dependency.jena>5.2.0</dependency.jena>
+    <dependency.jena>5.4.0</dependency.jena>
     <dependency.secure-agents>0.90.0</dependency.secure-agents>
 
     <!-- External dependencies -->
