@@ -26,7 +26,7 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 - Placeholder for bug fixes and security updates.
 
 ### Changed
-- Placeholder for changes to existing functionality.
+- Added line to README.md about Java tests failing on versions older than 17
 
 ---
 

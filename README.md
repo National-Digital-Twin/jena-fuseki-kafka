@@ -34,6 +34,7 @@ git clone https://github.com/National-Digital-Twin/jena-fuseki-kafka.git
 cd jena-fuseki-kafka
 ```
 ### 2. Run Build Version  
+This requires Java 17. Tests will currently fail if run on later Java versions. This also applies to `mvn test`
 ```sh  
 mvn clean package
 
@@ -84,6 +85,13 @@ To use the library directly in your project:
 ```
 
 _populate the `artifactId` above as appropriate._
+
+### 4. Testing
+You can run the test suite with
+```sh
+mvn test
+```
+Requires Java 17. There have been reports of failures when running on newer Java versions
 
 ## Features  
 - **Key functionality**  
