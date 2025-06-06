@@ -37,6 +37,8 @@ import org.apache.jena.kafka.ResponseFK;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.riot.WebContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Process incoming request as a SPARQL Update, RDF Patch or RDF data as appropriate.
@@ -50,6 +52,8 @@ import org.apache.jena.riot.WebContent;
  * <ul>
  */
 public abstract class FKProcessorBaseAction implements FKProcessor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FKProcessorBaseAction.class);
 
     protected FKProcessorBaseAction() {}
 
@@ -106,7 +110,7 @@ public abstract class FKProcessorBaseAction implements FKProcessor {
     }
 
     protected void actionFailed(RuntimeException ex) {
-        ex.printStackTrace();
+        LOGGER.error(ex.getMessage(), ex);
     }
 
     protected abstract void actionSparqlUpdate(String id, RequestFK request, InputStream data);

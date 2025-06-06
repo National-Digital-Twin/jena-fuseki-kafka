@@ -53,6 +53,8 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Send one file. */
 // Suppress SonarQube rule S110: This class has 6 parents which is greater than 5 authorized.
@@ -73,6 +75,9 @@ public class FK_Send extends CmdGeneral {
     public static void main(String... args) {
         new FK_Send(args).mainRun() ;
     }
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FK_Send.class);
 
     private String server = null;
     private String topic = null;
@@ -123,9 +128,9 @@ public class FK_Send extends CmdGeneral {
             return f.get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
