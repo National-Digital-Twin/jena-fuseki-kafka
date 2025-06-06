@@ -93,6 +93,11 @@ mvn test
 ```
 Requires Java 17. There have been reports of failures when running on newer Java versions
 
+## Testing Guide
+
+### Running Unit Tests
+Navigate to the root of the project and run `mvn test` to run the tests for the repository.
+
 ## Features  
 - **Key functionality**  
     - Provides an Apache Jena Fuseki extension module for receiving and processing data over Apache Kafka topics.  
