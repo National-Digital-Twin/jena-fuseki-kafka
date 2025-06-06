@@ -59,14 +59,16 @@ import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FKLib {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FKLib.class);
+    private static Logger LOG = FusekiKafka.LOG;
 
     private FKLib() {
         throw new IllegalStateException("Utility class");
     }
-
-    private static Logger LOG = FusekiKafka.LOG;
 
     // -- send file
     public static String  ctForFile(String fn) {
@@ -152,9 +154,9 @@ public class FKLib {
             return res;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
 
         return null;

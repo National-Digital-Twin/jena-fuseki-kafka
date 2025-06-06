@@ -142,7 +142,7 @@ public class KafkaConnectorAssembler extends AssemblerBase implements Assembler 
         try {
             return createSub(graph, node);
         } catch (RuntimeException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage(), ex);
             return null;
         }
     }
