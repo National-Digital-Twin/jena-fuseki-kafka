@@ -63,12 +63,12 @@ import org.slf4j.LoggerFactory;
 
 public class FKLib {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FKLib.class);
+    private static Logger LOG = FusekiKafka.LOG;
+
     private FKLib() {
         throw new IllegalStateException("Utility class");
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(FKLib.class);
-    private static Logger LOG = FusekiKafka.LOG;
 
     // -- send file
     public static String  ctForFile(String fn) {
